@@ -4,85 +4,116 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public float movePower = 1f;
-    public float jumpPower = 1f;
-    public int maxHealth = 100;
+    public float speed;
+    public GameObject[] weapons;
+    public bool[] hasWeapons;
 
-    public int health;
+    float hAxis;
+    float vAxis;
 
 
-    Rigidbody2D rigid;
+    Vector3 moveVec;
 
-    Vector3 movement;
-    bool isJumping = false;
+    bool shift;
+    bool fDown;
+    bool xDown;
+    bool isFireReady;
 
-    // Start is called before the first frame update
+
+    Weapon equipWeapon;
+    int equipWeaponIndex = -1;
+    float fireDelay;
+
+
+    Rigidbody rigid;
+    Animator anim;
+
+    GameObject nearObject;
+
+
     void Start()
     {
-        rigid = gameObject.GetComponent<Rigidbody2D>();
-        health = 30;
+        rigid = GetComponent<Rigidbody>();
+        anim = GetComponentInChildren<Animator>();
     }
 
-    // Update is called once per frame
+
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) 
-        {
-            isJumping = true;
-        }
+        GetInput();
+        Move();
+        Interaction();
+        Attack();
     }
 
-    void FixedUpdate()
+    void Interaction()
     {
-        move();
-        jump();
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        
-        if(other.gameObject.tag == "Healpoint")
+        if(fDown && nearObject != null)
         {
-            health = health + 40;
-            Debug.Log("Health + 40");
-            if (health > maxHealth || health == maxHealth)
+            if(nearObject.tag == "Weapon")
             {
-                health = maxHealth;
+                Item item = nearObject.GetComponent<Item>();
+                int weaponIndex = item.value;
+                hasWeapons[weaponIndex] = true;
+
+                Destroy(nearObject);
+
+                weapons[0].SetActive(true);
             }
         }
-        
-            
     }
 
-    void move()
+
+    void GetInput()
     {
-        Vector3 moveVelocity = Vector3.zero;
-
-        if(Input.GetAxisRaw("Horizontal") < 0)
-        {
-            moveVelocity = Vector3.left;
-        }
-
-        if (Input.GetAxisRaw("Horizontal") > 0)
-        {
-            moveVelocity = Vector3.right;
-        }
-
-        transform.position += moveVelocity * movePower * Time.deltaTime;
+        hAxis = Input.GetAxisRaw("Horizontal");
+        vAxis = Input.GetAxisRaw("Vertical");
+        shift = Input.GetButton("Run");
+        fDown = Input.GetButtonDown("Interaction");
+        xDown = Input.GetButtonDown("Fire1");
     }
 
-    void jump()
+    void Move()
     {
-        if (!isJumping)
+        moveVec = new Vector3(hAxis, 0, vAxis).normalized;
+
+
+        transform.position += moveVec * speed * Time.deltaTime;
+
+        anim.SetBool("isWalk", moveVec != Vector3.zero);
+        anim.SetBool("isRun", shift);
+
+        transform.LookAt(transform.position + moveVec);
+    }
+
+    void Attack()
+    {
+        if (equipWeapon == null)
         {
             return;
         }
 
-        rigid.velocity = Vector2.zero;
+        fireDelay += Time.deltaTime;
+        isFireReady = equipWeapon.rate < fireDelay;
 
-        Vector2 jumpVelocity = new Vector2(0, jumpPower);
-        rigid.AddForce(jumpVelocity, ForceMode2D.Impulse);
+        if(xDown && isFireReady)
+        {
+            Debug.Log("Attack");
+            equipWeapon.Use();
+            anim.SetTrigger("doSwing");
+            fireDelay = 0;
+        }
+    }
 
-        isJumping = false;
+    void OnTriggerStay(Collider other)
+    {
+        if (other.tag == "Weapon")
+            nearObject = other.gameObject;
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "Weapon")
+            nearObject = null;
     }
 }
