@@ -17,13 +17,14 @@ public class Player : MonoBehaviour
 
     bool shift;
     bool fDown;
-    bool xDown;
+    bool leftMouseDown;
     bool cDown;
     bool spaceBar;
 
     bool isFireReady;
     bool isEvadeReady;
     bool isJumpReady;
+
 
 
 
@@ -59,7 +60,7 @@ public class Player : MonoBehaviour
         //Interaction();
         Attack();
         Evade();
-        Jump();
+        //Jump();
     }
     /*
     void Interaction()
@@ -86,7 +87,7 @@ public class Player : MonoBehaviour
         vAxis = Input.GetAxisRaw("Vertical");
         shift = Input.GetButton("Run");
         fDown = Input.GetButtonDown("Interaction");
-        xDown = Input.GetKeyDown(KeyCode.X);
+        leftMouseDown = Input.GetMouseButtonDown(0);
         cDown = Input.GetKeyDown(KeyCode.C);
         spaceBar = Input.GetKeyDown(KeyCode.Space);
     }
@@ -118,12 +119,18 @@ public class Player : MonoBehaviour
     {
         attackDelay += Time.deltaTime;
         isFireReady = attackRate < attackDelay;
-        if(xDown && isFireReady && !spaceBar)
+        if(leftMouseDown && isFireReady && !spaceBar)
         {
             anim.SetTrigger("doSwing");
             melee.SetActive(true);
             attackDelay = 0;
+            Invoke("resetAttack", 0.6f);
         }
+    }
+
+    void resetAttack()
+    {
+        melee.SetActive(false);
     }
 
     void Evade()
@@ -137,6 +144,7 @@ public class Player : MonoBehaviour
         }
     }
 
+    /*
     void Jump()
     {
         jumpDelay += Time.deltaTime;
@@ -148,7 +156,7 @@ public class Player : MonoBehaviour
             jumpDelay = 0;
         }
     }
-
+    */
 
     /*
     void OnTriggerStay(Collider other)
