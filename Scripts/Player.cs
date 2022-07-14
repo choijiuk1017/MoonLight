@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public int Hp;
     public float speed;
     public float jumpPower;
     //public GameObject[] weapons;
@@ -26,8 +27,6 @@ public class Player : MonoBehaviour
     bool isJumpReady;
 
 
-
-
     public float attackRate;
     float attackDelay;
 
@@ -47,6 +46,7 @@ public class Player : MonoBehaviour
 
     void Start()
     {
+        Hp = 100;
         rigid = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
     }
