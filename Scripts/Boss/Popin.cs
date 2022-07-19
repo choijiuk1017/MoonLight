@@ -87,7 +87,7 @@ public class Popin : MonoBehaviour
         if (tracking)
         {
             Tracking();
-            Rush();
+            //Rush();
         }
         if (idle)
         {
@@ -141,7 +141,7 @@ public class Popin : MonoBehaviour
 
     public void Rush()
     {
-        if(Vector3.Distance(player.transform.position, transform.position) < 12f)
+        if(Vector3.Distance(player.transform.position, transform.position) < 30f)
         {
             velocity = new Vector3(Mathf.Clamp(target[0].transform.position.x - transform.position.x, -1.0f, 1.0f),
                                0,
@@ -150,7 +150,12 @@ public class Popin : MonoBehaviour
             transform.position += velocity * speed * 2 * Time.deltaTime;
 
             transform.LookAt(transform.position + velocity);
-            anim.SetBool("isRush", true);
+                                                              
+        }
+        if (Vector3.Distance(player.transform.position, transform.position) < 20f)
+        {
+            anim.SetBool("isWalk", false);
+            anim.SetTrigger("isRush");
         }
     }
 
