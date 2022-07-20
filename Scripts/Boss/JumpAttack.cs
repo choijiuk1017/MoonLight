@@ -7,7 +7,14 @@ public class JumpAttack : MonoBehaviour
     public GameObject monster;
     Rigidbody rigid;
     public float jumpPower;
-
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Player")
+        {
+            Debug.Log("¾ß¹ß");
+            Jump();
+        }
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -23,13 +30,6 @@ public class JumpAttack : MonoBehaviour
     void Jump()
     {
         rigid.AddForce(Vector3.up * jumpPower * 2, ForceMode.Impulse);
-    }
-
-    private void OnTriggerEnter(Collision col)
-    {
-        if(col.gameObject.tag == "Player")
-        {
-            Jump();
-        }
+        monster.GetComponent<Animator>().SetTrigger("isJump");
     }
 }

@@ -154,7 +154,6 @@ public class Popin : MonoBehaviour
         }
         if (Vector3.Distance(player.transform.position, transform.position) < 20f)
         {
-            anim.SetBool("isWalk", false);
             anim.SetTrigger("isRush");
         }
     }
