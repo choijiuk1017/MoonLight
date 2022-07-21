@@ -8,6 +8,9 @@ public class Weapon : MonoBehaviour
     public Type type;
     public int damage;
     public float rate;
+
+
+
     public BoxCollider meleerArea;
     public TrailRenderer trailEffect;
 

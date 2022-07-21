@@ -11,10 +11,14 @@ public class Popin : MonoBehaviour
     private float inputX;
     private float inputZ;
 
+    public float jumpPower;
+
     public bool stateChange;//State 바꾸기용 불변수
     public bool idle;
-    public bool moving;
+    public bool rush;
     public bool tracking;
+
+    int randomNum;
 
     public Vector3 directionVec;
     private Rigidbody rigidbody;
@@ -25,11 +29,12 @@ public class Popin : MonoBehaviour
     public LayerMask whatIsLayer;
     public float overlapRadius;
 
+    public GameObject player;
 
     Animator anim;
 
 
-    enum State { Idle, Moving, Tracking }
+    enum State { Idle, Rush, Tracking }
 
     private State state
     {
@@ -40,12 +45,12 @@ public class Popin : MonoBehaviour
                 case State.Idle:
                     idle = true;
 
-                    moving = false;
+                    rush = false;
                     tracking = false;
                     break;
 
-                case State.Moving:
-                    moving = true;
+                case State.Rush:
+                    rush = true;
 
                     idle = false;
                     tracking = false;
@@ -55,7 +60,7 @@ public class Popin : MonoBehaviour
                     tracking = true;
 
                     idle = false;
-                    moving = false;
+                    rush = false;
                     break;
             }
         }
@@ -82,22 +87,25 @@ public class Popin : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        randomNum = Random.Range(0, 2);
         if (tracking)
         {
             Tracking();
+            if (randomNum == 0)
+            {
+                Rush();
+            }
+            else if (randomNum == 1)
+            {
+                Jump();
+            }
         }
-        else if (idle)
+        if (idle)
         {
             Idle();
         }
-        else if (moving)
-        {
-            Debug.Log("Current State:moving");
-        }
-        else if (tracking)
-        {
-            Debug.Log("Current State:tracking");
-        }
+        
+
         /*
         if (idle)
         {
@@ -112,7 +120,9 @@ public class Popin : MonoBehaviour
             Tracking();
         }
         */
+
         target = Physics.OverlapSphere(transform.position, overlapRadius, whatIsLayer);
+
 
         if (target.Length > 0)
         {
@@ -138,21 +148,57 @@ public class Popin : MonoBehaviour
         anim.SetBool("isWalk", false);
 
         Direction();
-
     }
 
-    public void Moving()
+    public void Rush()
     {
-        if (!stateChange) StartCoroutine(StateChange());
+        if(Vector3.Distance(player.transform.position, transform.position) < 30f)
+        {
+            velocity = new Vector3(Mathf.Clamp(target[0].transform.position.x - transform.position.x, -1.0f, 1.0f),
+                               0,
+                               Mathf.Clamp(target[0].transform.position.z - transform.position.z, -1.0f, 1.0f));
 
-        //float fallSpeed = rigidbody.velocity.y;
+            transform.position += velocity * speed * 2 * Time.deltaTime;
 
-        //캐릭터가 움직이는 코드
-        velocity = new Vector3(inputX, 0, inputZ);
-        transform.position += velocity * speed * Time.deltaTime;
-
-        Direction();
+            transform.LookAt(transform.position + velocity);
+            if (Vector3.Distance(player.transform.position, transform.position) < 20f)
+            {
+                Invoke("AnimeRush", 0.5f);
+            }
+        }
     }
+
+    void AnimeRush()
+    {
+        anim.SetBool("isWalk", false);
+        anim.SetBool("isRush", true);
+    }
+
+    void AnimeJump()
+    {
+        anim.SetBool("isWalk", false);
+        anim.SetBool("isJump", true);
+    }
+
+    void Jump()
+    {
+        if (Vector3.Distance(player.transform.position, transform.position) < 30f)
+        {
+            velocity = new Vector3(Mathf.Clamp(target[0].transform.position.x - transform.position.x, -1.0f, 1.0f),
+                               0,
+                               Mathf.Clamp(target[0].transform.position.z - transform.position.z, -1.0f, 1.0f));
+
+            transform.position += velocity * speed * 2 * Time.deltaTime;
+
+            transform.LookAt(transform.position + velocity);
+            if (Vector3.Distance(player.transform.position, transform.position) < 20f)
+            {
+                rigidbody.AddForce(Vector3.up * jumpPower * 2, ForceMode.Impulse);
+                Invoke("AnimeJump", 0.3f);
+            }
+        }
+    }
+
     public void Tracking()
     {      
         velocity = new Vector3(Mathf.Clamp(target[0].transform.position.x - transform.position.x, -1.0f, 1.0f),
@@ -161,14 +207,7 @@ public class Popin : MonoBehaviour
 
         transform.position += velocity * speed * Time.deltaTime;
         transform.LookAt(transform.position + velocity);
-        anim.SetBool("isWalk", true);
-
-        if (Vector3.Distance(transform.position, target[0].transform.position) == 3)
-        {
-            
-            transform.position += velocity * speed * Time.deltaTime;
-            anim.SetBool("isWalk", false);
-        }
+        anim.SetBool("isWalk", true); 
     }
 
     public void Direction()

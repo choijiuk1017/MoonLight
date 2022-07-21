@@ -22,12 +22,13 @@ public class Bite : MonoBehaviour
 
     void biteStart()
     {
-        Monster.GetComponent<Animator>().SetBool("isBite", true);
+        Monster.GetComponent<Animator>().SetTrigger("isBite");
+        Monster.GetComponent<Animator>().SetBool("isWalk", false);
     }
 
     void biteEnd()
     {
-        Monster.GetComponent<Animator>().SetBool("isBite", false);
+        Monster.GetComponent<Animator>().SetBool("isWalk", true);
     }
     // Update is called once per frame
     void Update()
