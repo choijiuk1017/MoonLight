@@ -11,10 +11,14 @@ public class Popin : MonoBehaviour
     private float inputX;
     private float inputZ;
 
+    public float jumpPower;
+
     public bool stateChange;//State 바꾸기용 불변수
     public bool idle;
     public bool rush;
     public bool tracking;
+
+    int randomNum;
 
     public Vector3 directionVec;
     private Rigidbody rigidbody;
@@ -83,11 +87,18 @@ public class Popin : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        
+        randomNum = Random.Range(0, 2);
         if (tracking)
         {
             Tracking();
-            //Rush();
+            if (randomNum == 0)
+            {
+                Rush();
+            }
+            else if (randomNum == 1)
+            {
+                Jump();
+            }
         }
         if (idle)
         {
@@ -150,11 +161,41 @@ public class Popin : MonoBehaviour
             transform.position += velocity * speed * 2 * Time.deltaTime;
 
             transform.LookAt(transform.position + velocity);
-                                                              
+            if (Vector3.Distance(player.transform.position, transform.position) < 20f)
+            {
+                Invoke("AnimeRush", 0.5f);
+            }
         }
-        if (Vector3.Distance(player.transform.position, transform.position) < 20f)
+    }
+
+    void AnimeRush()
+    {
+        anim.SetBool("isWalk", false);
+        anim.SetBool("isRush", true);
+    }
+
+    void AnimeJump()
+    {
+        anim.SetBool("isWalk", false);
+        anim.SetBool("isJump", true);
+    }
+
+    void Jump()
+    {
+        if (Vector3.Distance(player.transform.position, transform.position) < 30f)
         {
-            anim.SetTrigger("isRush");
+            velocity = new Vector3(Mathf.Clamp(target[0].transform.position.x - transform.position.x, -1.0f, 1.0f),
+                               0,
+                               Mathf.Clamp(target[0].transform.position.z - transform.position.z, -1.0f, 1.0f));
+
+            transform.position += velocity * speed * 2 * Time.deltaTime;
+
+            transform.LookAt(transform.position + velocity);
+            if (Vector3.Distance(player.transform.position, transform.position) < 20f)
+            {
+                rigidbody.AddForce(Vector3.up * jumpPower * 2, ForceMode.Impulse);
+                Invoke("AnimeJump", 0.3f);
+            }
         }
     }
 

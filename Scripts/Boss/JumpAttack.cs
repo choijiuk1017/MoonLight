@@ -5,16 +5,11 @@ using UnityEngine;
 public class JumpAttack : MonoBehaviour
 {
     public GameObject monster;
+    public GameObject player;
     Rigidbody rigid;
     public float jumpPower;
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "Player")
-        {
-            Debug.Log("¾ß¹ß");
-            Jump();
-        }
-    }
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,7 +19,11 @@ public class JumpAttack : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(Vector3.Distance(player.transform.position, transform.position) < 20f)
+        {
+            Debug.Log("tlqkf");
+            Jump();
+        }
     }
 
     void Jump()
