@@ -36,12 +36,13 @@ public class Player : MonoBehaviour
     public float jumpRate;
     float jumpDelay;
 
+    [SerializeField]
+    private Transform cameraTransform;
 
     Rigidbody rigid;
     Animator anim;
 
     GameObject nearObject;
-    public GameObject melee;
 
 
     void Start()
@@ -54,6 +55,16 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        float horizontalInput = Input.GetAxis("Horizontal");
+        float vertiacalInput = Input.GetAxis("Vertical");
+
+        Vector3 movementDirection = new Vector3(horizontalInput, 0, vertiacalInput);
+        float inputMagnitude = Mathf.Clamp01(movementDirection.magnitude);
+
+
+        movementDirection = Quaternion.AngleAxis(cameraTransform.rotation.eulerAngles.y, Vector3.up) * movementDirection;
+        movementDirection.Normalize();
+
         GetInput();
         Move();
         Run();
@@ -81,6 +92,17 @@ public class Player : MonoBehaviour
     }
     */
 
+    private void OnApplicationFocus(bool focus)
+    {
+        if(focus)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+        }
+    }
     void GetInput()
     {
         hAxis = Input.GetAxisRaw("Horizontal");
@@ -122,15 +144,8 @@ public class Player : MonoBehaviour
         if(leftMouseDown && isFireReady && !spaceBar)
         {
             anim.SetTrigger("doSwing");
-            melee.SetActive(true);
             attackDelay = 0;
-            Invoke("resetAttack", 0.6f);
         }
-    }
-
-    void resetAttack()
-    {
-        melee.SetActive(false);
     }
 
     void Evade()
