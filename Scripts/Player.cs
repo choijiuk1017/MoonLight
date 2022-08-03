@@ -45,6 +45,12 @@ public class Player : MonoBehaviour
     GameObject nearObject;
 
 
+    [SerializeField]
+    private Transform characterBody;
+    [SerializeField]
+    private Transform cameraArm;
+
+
     void Start()
     {
         Hp = 100;
@@ -91,18 +97,25 @@ public class Player : MonoBehaviour
         }
     }
     */
-
-    private void OnApplicationFocus(bool focus)
+    private void LookAround()
     {
-        if(focus)
+        Vector2 mouseDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+        Vector3 camAngle = cameraArm.rotation.eulerAngles;
+
+        //Ãß°¡
+        float x = camAngle.x - mouseDelta.y;
+        if (x < 180f)
         {
-            Cursor.lockState = CursorLockMode.Locked;
+            x = Mathf.Clamp(x, -1f, 70f);
         }
         else
         {
-            Cursor.lockState = CursorLockMode.None;
+            x = Mathf.Clamp(x, 335f, 361f);
         }
+
+        cameraArm.rotation = Quaternion.Euler(x, camAngle.y + mouseDelta.x, camAngle.z);
     }
+
     void GetInput()
     {
         hAxis = Input.GetAxisRaw("Horizontal");
@@ -116,6 +129,7 @@ public class Player : MonoBehaviour
 
     void Move()
     {
+        /*
         moveVec = new Vector3(hAxis, 0, vAxis).normalized;
 
         transform.position += moveVec * speed * Time.deltaTime;
@@ -123,6 +137,19 @@ public class Player : MonoBehaviour
         anim.SetBool("isWalk", moveVec != Vector3.zero);
 
         transform.LookAt(transform.position + moveVec);
+        */
+        Vector2 moveInput = new Vector2(hAxis, vAxis);
+        bool isMove = moveInput.magnitude != 0;
+        anim.SetBool("isWalk", isMove);
+
+        if(isMove)
+        {
+            Vector3 lookForward = new Vector3(cameraArm.forward.x, 0f, cameraArm.forward.z).normalized;
+            Vector3 lookRight = new Vector3(cameraArm.right.x, 0f, cameraArm.right.z).normalized;
+            Vector3 moveDir = lookForward * moveInput.y + lookRight * moveInput.x;
+
+            transform.position += moveDir * Time.deltaTime * 5f;
+        }
     }
 
     void Run()
