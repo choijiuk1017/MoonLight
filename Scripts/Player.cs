@@ -44,11 +44,9 @@ public class Player : MonoBehaviour
 
     GameObject nearObject;
 
+    public Shot shot;
 
-    [SerializeField]
-    private Transform characterBody;
-    [SerializeField]
-    private Transform cameraArm;
+    public Camera followCamera;
 
 
     void Start()
@@ -97,25 +95,6 @@ public class Player : MonoBehaviour
         }
     }
     */
-    private void LookAround()
-    {
-        Vector2 mouseDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-        Vector3 camAngle = cameraArm.rotation.eulerAngles;
-
-        //Ãß°¡
-        float x = camAngle.x - mouseDelta.y;
-        if (x < 180f)
-        {
-            x = Mathf.Clamp(x, -1f, 70f);
-        }
-        else
-        {
-            x = Mathf.Clamp(x, 335f, 361f);
-        }
-
-        cameraArm.rotation = Quaternion.Euler(x, camAngle.y + mouseDelta.x, camAngle.z);
-    }
-
     void GetInput()
     {
         hAxis = Input.GetAxisRaw("Horizontal");
@@ -126,30 +105,28 @@ public class Player : MonoBehaviour
         cDown = Input.GetKeyDown(KeyCode.C);
         spaceBar = Input.GetKeyDown(KeyCode.Space);
     }
-
+    void Turn()
+    {
+        if(leftMouseDown)
+        {
+            Ray ray = followCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit rayHit;
+            if(Physics.Raycast(ray, out rayHit, 100))
+            {
+                Vector3 nextVec = rayHit.point - transform.position;
+                transform.LookAt(transform.position + nextVec);
+            }
+        }
+    }
     void Move()
     {
-        /*
         moveVec = new Vector3(hAxis, 0, vAxis).normalized;
 
         transform.position += moveVec * speed * Time.deltaTime;
 
         anim.SetBool("isWalk", moveVec != Vector3.zero);
 
-        transform.LookAt(transform.position + moveVec);
-        */
-        Vector2 moveInput = new Vector2(hAxis, vAxis);
-        bool isMove = moveInput.magnitude != 0;
-        anim.SetBool("isWalk", isMove);
-
-        if(isMove)
-        {
-            Vector3 lookForward = new Vector3(cameraArm.forward.x, 0f, cameraArm.forward.z).normalized;
-            Vector3 lookRight = new Vector3(cameraArm.right.x, 0f, cameraArm.right.z).normalized;
-            Vector3 moveDir = lookForward * moveInput.y + lookRight * moveInput.x;
-
-            transform.position += moveDir * Time.deltaTime * 5f;
-        }
+        transform.LookAt(transform.position + moveVec);   
     }
 
     void Run()
@@ -170,6 +147,7 @@ public class Player : MonoBehaviour
         isFireReady = attackRate < attackDelay;
         if(leftMouseDown && isFireReady && !spaceBar)
         {
+            shot.use();
             anim.SetTrigger("doSwing");
             attackDelay = 0;
         }

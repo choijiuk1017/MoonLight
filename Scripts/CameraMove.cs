@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class CameraMove : MonoBehaviour
 {
-    [SerializeField]
-    private Transform characterBody;
-    [SerializeField]
-    private Transform cameraArm;
+    public Transform target;
+    public Vector3 offset;
 
-
-    // Update is called once per frame
-   
+    private void Update()
+    {
+        transform.position = target.position + offset;
+    }
 
 }
