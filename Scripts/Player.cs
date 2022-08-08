@@ -77,6 +77,7 @@ public class Player : MonoBehaviour
         Evade();
         //Jump();
     }
+
     /*
     void Interaction()
     {
@@ -95,6 +96,7 @@ public class Player : MonoBehaviour
         }
     }
     */
+
     void GetInput()
     {
         hAxis = Input.GetAxisRaw("Horizontal");
@@ -105,6 +107,7 @@ public class Player : MonoBehaviour
         cDown = Input.GetKeyDown(KeyCode.C);
         spaceBar = Input.GetKeyDown(KeyCode.Space);
     }
+
     void Turn()
     {
         if(leftMouseDown)
@@ -118,6 +121,7 @@ public class Player : MonoBehaviour
             }
         }
     }
+
     void Move()
     {
         moveVec = new Vector3(hAxis, 0, vAxis).normalized;
@@ -140,7 +144,6 @@ public class Player : MonoBehaviour
         transform.LookAt(transform.position + moveVec);
     }
 
-
     void Attack()
     {
         attackDelay += Time.deltaTime;
@@ -150,6 +153,7 @@ public class Player : MonoBehaviour
             shot.use();
             anim.SetTrigger("doSwing");
             attackDelay = 0;
+
         }
     }
 
