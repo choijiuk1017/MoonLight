@@ -6,11 +6,11 @@ using UnityEngine.AI;
 public class Golem : MonoBehaviour
 {
     public float speed;
-    private Vector3 velocity;
+    public Vector3 velocity;
     private float inputX;
     private float inputZ;
     public float stateChangeTime;
-    Animator anim;
+    public Animator anim;
 
     public float jumpPower;
 
@@ -24,15 +24,14 @@ public class Golem : MonoBehaviour
     private Rigidbody rigidbody;
     public int rayDistance;
 
-
     public bool stateChange;//State 바꾸기용 불변수
     public bool idle;
-    public bool rush;
+    public bool theRock;
     public bool tracking;
 
-    enum State { Idle, Rush, Tracking }
+    public enum State { Idle,TheRock, Tracking, BoongBoong, ShotGun }
 
-    private State state
+    public State state
     {
         set
         {
@@ -41,12 +40,12 @@ public class Golem : MonoBehaviour
                 case State.Idle:
                     idle = true;
 
-                    rush = false;
+                    theRock = false;
                     tracking = false;
                     break;
 
-                case State.Rush:
-                    rush = true;
+                case State.TheRock:
+                    theRock = true;
 
                     idle = false;
                     tracking = false;
@@ -56,11 +55,12 @@ public class Golem : MonoBehaviour
                     tracking = true;
 
                     idle = false;
-                    rush = false;
+                    theRock = false;
                     break;
             }
         }
     }
+
 
     // Start is called before the first frame update
     void Start()
@@ -81,12 +81,11 @@ public class Golem : MonoBehaviour
     private void FixedUpdate()
     {
         target = Physics.OverlapSphere(transform.position, overlapRadius, whatIsLayer);
+
         if (tracking)
         {
-            Trace();
-            
+            Trace(); 
         }
-        
 
         if (target.Length > 0)
         {
@@ -100,15 +99,13 @@ public class Golem : MonoBehaviour
             return;
         }
     }
+
     IEnumerator StateChange()
     {
         stateChange = true;
 
         yield return new WaitForSeconds(stateChangeTime);
 
-        //State.Idle = 0, State.Moving = 1, State.Tracking = 2
-        //0과 1까지만 대입
-        state = (State)Random.Range(0, 2);
         stateChange = false;
     }
 

@@ -128,13 +128,7 @@ public class Popin : MonoBehaviour
         {
             state = State.Tracking;
         }
-        else
-        {
-            //추적 종료 시 Idle, Moving 상태로 랜덤하게 돌입
-            state = (State)Random.Range(0, 2);
-            stateChange = false;
-            return;
-        }
+ 
 
     }
 
