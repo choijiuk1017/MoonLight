@@ -105,6 +105,10 @@ GameObject:
   m_Component:
   - component: {fileID: 281390622150431042}
   - component: {fileID: 318922395003411698}
+  - component: {fileID: 2230650261286097251}
+  - component: {fileID: 5222668368366230942}
+  - component: {fileID: 7453717836979589508}
+  - component: {fileID: 8341191947433196852}
   m_Layer: 0
   m_Name: "\uCD98\uBC30"
   m_TagString: Untagged
@@ -151,6 +155,97 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &2230650261286097251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 624984310186200056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d721190d45907ae4bad7de53b62a5052, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 0
+  velocity: {x: 0, y: 0, z: 0}
+  stateChangeTime: 0
+  anim: {fileID: 0}
+  jumpPower: 0
+  whatIsLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  overlapRadius: 200
+  player: {fileID: 7049352691707350946, guid: 9e0185d4f66fdeb4eb6d9871ad10d155, type: 3}
+  target:
+  - {fileID: 4201517426547731313, guid: 9e0185d4f66fdeb4eb6d9871ad10d155, type: 3}
+  directionVec: {x: 0, y: 0, z: 0}
+  rayDistance: 70
+  stateChange: 0
+  idle: 0
+  theRock: 0
+  tracking: 0
+--- !u!54 &5222668368366230942
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 624984310186200056}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 80
+  m_CollisionDetection: 0
+--- !u!136 &7453717836979589508
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 624984310186200056}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.024557378
+  m_Height: 0.089942165
+  m_Direction: 1
+  m_Center: {x: -0.00047348975, y: 0.046665974, z: -1.023064e-12}
+--- !u!114 &8341191947433196852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 624984310186200056}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1959a1228050cc04db5b895560fceb9c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 0
+  velocity: {x: 0, y: 0, z: 0}
+  stateChangeTime: 0
+  anim: {fileID: 318922395003411698}
+  jumpPower: 0
+  whatIsLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  overlapRadius: 0
+  player: {fileID: 0}
+  target: []
+  directionVec: {x: 0, y: 0, z: 0}
+  rayDistance: 0
+  stateChange: 0
+  idle: 0
+  theRock: 0
+  tracking: 0
+  overlapRadius2: 170
+  target2: []
 --- !u!1 &634796501640140013
 GameObject:
   m_ObjectHideFlags: 0
@@ -449,6 +544,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4068014397412195090}
+  - component: {fileID: 4894092628083002421}
   m_Layer: 0
   m_Name: L_arm2
   m_TagString: Untagged
@@ -472,6 +568,20 @@ Transform:
   m_Father: {fileID: 2835043208047684665}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &4894092628083002421
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2851353456784362254}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.023811018
+  m_Height: 0.08425182
+  m_Direction: 0
+  m_Center: {x: -0.029295271, y: -0.011722516, z: -0.0011847556}
 --- !u!1 &2891863190534859879
 GameObject:
   m_ObjectHideFlags: 0
@@ -1056,6 +1166,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 680800614612785556}
+  - component: {fileID: 1545283386543063959}
   m_Layer: 0
   m_Name: L_arm2(mirrored)
   m_TagString: Untagged
@@ -1079,6 +1190,20 @@ Transform:
   m_Father: {fileID: 4055747874037537317}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &1545283386543063959
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6538806499464638210}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.021607898
+  m_Height: 0.07829112
+  m_Direction: 0
+  m_Center: {x: -0.021599473, y: 0.010907132, z: -0.0012414339}
 --- !u!1 &6925543507116472811
 GameObject:
   m_ObjectHideFlags: 0

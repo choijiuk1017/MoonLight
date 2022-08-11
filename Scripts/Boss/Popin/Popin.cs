@@ -128,7 +128,13 @@ public class Popin : MonoBehaviour
         {
             state = State.Tracking;
         }
- 
+        else
+        {
+            state = (State)Random.Range(0, 2);
+            stateChange = false;
+            return;
+        }
+
 
     }
 

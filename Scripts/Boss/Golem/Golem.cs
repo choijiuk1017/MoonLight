@@ -14,12 +14,8 @@ public class Golem : MonoBehaviour
 
     public float jumpPower;
 
-    public LayerMask whatIsLayer;
-    public float overlapRadius;
-
     public GameObject player;
 
-    public Collider[] target;
     public Vector3 directionVec;
     private Rigidbody rigidbody;
     public int rayDistance;
@@ -29,7 +25,7 @@ public class Golem : MonoBehaviour
     public bool theRock;
     public bool tracking;
 
-    public enum State { Idle,TheRock, Tracking, BoongBoong, ShotGun }
+    public enum State { Idle, Tracking, TheRock, BoongBoong, ShotGun }
 
     public State state
     {
@@ -67,64 +63,79 @@ public class Golem : MonoBehaviour
     {
         rigidbody = GetComponent<Rigidbody>();
 
-        rayDistance = 1;
-
         anim = GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        Debug.DrawRay(transform.position, directionVec * rayDistance);
+
     }
 
     private void FixedUpdate()
     {
-        target = Physics.OverlapSphere(transform.position, overlapRadius, whatIsLayer);
+        
+        float distance = Vector3.Distance(transform.position, player.transform.position); 
 
         if (tracking)
         {
-            Trace(); 
+            Trace();
         }
-
-        if (target.Length > 0)
+        else if(idle)
+        {
+            Idle();
+            
+        }
+        else if(theRock)
+        {
+            Rock();
+            Invoke("StopRock", 1.5f);
+            velocity = new Vector3(0, 0, 0);
+            transform.position += velocity * speed * Time.deltaTime;
+        }
+        
+        
+        if(distance < 200)
         {
             state = State.Tracking;
-        }
-        else
-        {
-            //추적 종료 시 Idle, Moving 상태로 랜덤하게 돌입
-            state = (State)Random.Range(0, 2);
-            stateChange = false;
-            return;
+            if (distance < 150)
+            {
+                int randomNum = Random.Range(1, 11);
+                if (randomNum <= 4)
+                {
+                    state = State.TheRock;
+                }
+            }
         }
     }
-
-    IEnumerator StateChange()
+    
+    public void Idle()
     {
-        stateChange = true;
-
-        yield return new WaitForSeconds(stateChangeTime);
-
-        stateChange = false;
-    }
-
-    void OnDrawGizmosSelected()
-    {
-        //충돌범위 기즈모
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(transform.position, overlapRadius);
+        anim.SetBool("isWalk", false);
+        velocity = new Vector3(0, 0, 0);
+        transform.position += velocity * speed * Time.deltaTime;
+        Direction();
     }
 
     void Trace()
     {
-        velocity = new Vector3(Mathf.Clamp(target[0].transform.position.x - transform.position.x, -1.0f, 1.0f),
+        velocity = new Vector3(Mathf.Clamp(player.transform.position.x - transform.position.x, -1.0f, 1.0f),
                                0,
-                               Mathf.Clamp(target[0].transform.position.z - transform.position.z, -1.0f, 1.0f));
+                               Mathf.Clamp(player.transform.position.z - transform.position.z, -1.0f, 1.0f));
 
         transform.position += velocity * speed * Time.deltaTime;
         transform.LookAt(transform.position + velocity);
         anim.SetBool("isWalk", true);
+    }
+
+    void Rock()
+    {
+        anim.SetTrigger("isRock");
+    }
+
+    void StopRock()
+    {
+        anim.ResetTrigger("isRock");
     }
 
     public void Direction()
