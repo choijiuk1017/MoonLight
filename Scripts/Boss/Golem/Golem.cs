@@ -21,41 +21,14 @@ public class Golem : MonoBehaviour
     public int rayDistance;
 
     public bool stateChange;//State 바꾸기용 불변수
-    public bool idle;
-    public bool theRock;
-    public bool tracking;
+
+
+    private bool isDead = false;
 
     public enum State { Idle, Tracking, TheRock, BoongBoong, ShotGun }
 
-    public State state
-    {
-        set
-        {
-            switch (value)
-            {
-                case State.Idle:
-                    idle = true;
-
-                    theRock = false;
-                    tracking = false;
-                    break;
-
-                case State.TheRock:
-                    theRock = true;
-
-                    idle = false;
-                    tracking = false;
-                    break;
-
-                case State.Tracking:
-                    tracking = true;
-
-                    idle = false;
-                    theRock = false;
-                    break;
-            }
-        }
-    }
+    public State state = State.Idle;
+    
 
 
     // Start is called before the first frame update
@@ -64,6 +37,8 @@ public class Golem : MonoBehaviour
         rigidbody = GetComponent<Rigidbody>();
 
         anim = GetComponentInChildren<Animator>();
+
+        StartCoroutine("CheckState");
     }
 
     // Update is called once per frame
@@ -74,41 +49,45 @@ public class Golem : MonoBehaviour
 
     private void FixedUpdate()
     {
-        
-        float distance = Vector3.Distance(transform.position, player.transform.position); 
-
-        if (tracking)
+        if(state == State.Idle)
+        {
+            Idle();
+        }
+        else if(state == State.Tracking)
         {
             Trace();
         }
-        else if(idle)
-        {
-            Idle();
-            
-        }
-        else if(theRock)
+        else if(state == State.TheRock)
         {
             Rock();
-            Invoke("StopRock", 1.5f);
-            velocity = new Vector3(0, 0, 0);
-            transform.position += velocity * speed * Time.deltaTime;
+            Invoke("StopRock",  2f);
         }
-        
-        
-        if(distance < 200)
+            
+    }
+    
+    IEnumerator CheckState()
+    {
+        while(!isDead)
         {
-            state = State.Tracking;
-            if (distance < 150)
+            yield return new WaitForSeconds(0.2f);
+            float distance = Vector3.Distance(transform.position, player.transform.position);
+
+            if(distance <= 200f)
             {
-                int randomNum = Random.Range(1, 11);
-                if (randomNum <= 4)
+                state = State.Tracking;
+                if (distance <= 150f)
                 {
                     state = State.TheRock;
                 }
             }
+            if(distance <= 30f)
+            {
+                state = State.Idle;
+            }
         }
     }
-    
+
+
     public void Idle()
     {
         anim.SetBool("isWalk", false);
