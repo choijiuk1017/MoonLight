@@ -11,7 +11,7 @@ public class Golem : MonoBehaviour
     private float inputZ;
     public float stateChangeTime;
     public Animator anim;
-
+    int randomNum;
     public float jumpPower;
 
     public GameObject player;
@@ -44,12 +44,13 @@ public class Golem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
     }
 
     private void FixedUpdate()
     {
-        if(state == State.Idle)
+        randomNum = Random.Range(1, 11);
+        Debug.Log(randomNum);
+        if (state == State.Idle)
         {
             Idle();
         }
@@ -57,12 +58,36 @@ public class Golem : MonoBehaviour
         {
             Trace();
         }
-        else if(state == State.TheRock)
+
+        if(state == State.TheRock)
         {
-            Rock();
-            Invoke("StopRock",  2f);
-        }
+            if (randomNum <= 4)
+            {
+                Rock();
+
+                Invoke("StopRock", 2f);
+            }
+        } 
+
+        if(state == State.BoongBoong)
+        {
+            if (randomNum <= 6 || randomNum < 8)
+            {
+                BoongBoong();
+
+                Invoke("StopBoong", 2f);
+            }
+           
             
+        }
+
+        if(state == State.ShotGun)
+        {
+            if (randomNum <= 8)
+            {
+                ShotGun();
+            }
+        }
     }
     
     IEnumerator CheckState()
@@ -70,23 +95,36 @@ public class Golem : MonoBehaviour
         while(!isDead)
         {
             yield return new WaitForSeconds(0.2f);
+
             float distance = Vector3.Distance(transform.position, player.transform.position);
 
-            if(distance <= 200f)
+            if (distance <= 200f )
             {
                 state = State.Tracking;
-                if (distance <= 150f)
-                {
-                    state = State.TheRock;
-                }
             }
-            if(distance <= 30f)
+            if (distance <= 150f)
             {
-                state = State.Idle;
+                state = State.TheRock;
+                Invoke("ReturnTrace", 2f);
+            }
+            if (distance <= 30f)
+            {
+                
+                state = State.BoongBoong;
+                
+            }
+            if (distance <= 29f)
+            {
+                state = State.ShotGun;
+
             }
         }
     }
 
+    void ReturnTrace()
+    {
+        state = State.Tracking;
+    }
 
     public void Idle()
     {
@@ -96,6 +134,20 @@ public class Golem : MonoBehaviour
         Direction();
     }
 
+    void BoongBoong()
+    {
+        anim.SetTrigger("isBoong");
+    }
+
+    void StopBoong()
+    {
+        anim.ResetTrigger("isBoong");
+    }
+
+    void ShotGun()
+    {
+        anim.SetTrigger("isShot");
+    }
     void Trace()
     {
         velocity = new Vector3(Mathf.Clamp(player.transform.position.x - transform.position.x, -1.0f, 1.0f),
